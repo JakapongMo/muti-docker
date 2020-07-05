@@ -8,7 +8,9 @@ before_install:
 # test section if test exit other 0  then It's will assume building fail
 script:
     # add coverage for making output has exit status
-    - docker run jakapongkl/react-test npm test -- --coverage
+    #- docker run jakapongkl/react-test npm test -- --coverage
+    # Fix bug
+    - docker run -e CI=true jakapongkl/react-test npm test
 
 after_success:
     - docker build -t jakapongkl/multi-client ./client
@@ -17,7 +19,7 @@ after_success:
     - docker build -t jakapongkl/muti-worker ./worker
     # Log in to the docker CLI
     # Take password and use as standard in to next command
-    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --pasword-stdin
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
     # take those images and push them to docker hub
     - docker push jakapongkl/multi-client
     - docker push jakapongkl/muti-nginx
