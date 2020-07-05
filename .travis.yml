@@ -1,0 +1,25 @@
+sudo: required
+services:
+    - docker
+
+before_install:
+    - docker build -t jakapongkl/react-test -f ./client/Dockerfile.dev ./client
+
+# test section if test exit other 0  then It's will assume building fail
+script:
+    # add coverage for making output has exit status
+    - docker run jakapongkl/react-test npm test -- --coverage
+
+after_success:
+    - docker build -t jakapongkl/multi-client ./client
+    - docker build -t jakapongkl/muti-nginx ./nginx
+    - docker build -t jakapongkl/muti-server ./server
+    - docker build -t jakapongkl/muti-worker ./worker
+    # Log in to the docker CLI
+    # Take password and use as standard in to next command
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --pasword-stdin
+    # take those images and push them to docker hub
+    - docker push jakapongkl/multi-client
+    - docker push jakapongkl/muti-nginx
+    - docker push jakapongkl/muti-server
+    - docker push jakapongkl/muti-worker
