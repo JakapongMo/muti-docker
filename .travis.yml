@@ -25,3 +25,4 @@ after_success:
     - docker push jakapongkl/muti-nginx
     - docker push jakapongkl/muti-server
     - docker push jakapongkl/muti-worker
+    - docker logout
